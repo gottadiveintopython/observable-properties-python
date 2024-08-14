@@ -45,16 +45,14 @@ __all__ = [
 # Imports
 # *****************************************************************************
 
-from typing import Callable, Any, Coroutine
-from inspect import iscoroutinefunction
-from asyncio import run
+from typing import Callable, Any
 from contextlib import contextmanager
 
 # *****************************************************************************
 # Types
 # *****************************************************************************
 
-Observer = Callable[[object, str, Any], None | Coroutine[Any, Any, None]]
+Observer = Callable[[object, str, Any], None]
 """Callback prototype for observable properties.
 
 Args:
@@ -89,10 +87,7 @@ class observable(property):
         for observer in subscribers:
             if observer not in recursions:
                 recursions.append(observer)
-                if iscoroutinefunction(observer):
-                    run(observer(__instance, self.observable_property, __value))
-                else:
-                    observer(__instance, self.observable_property, __value)
+                observer(__instance, self.observable_property, __value)
             else:
                 raise ObservablePropertyError(
                     f"'{observer.__name__}' is not allowed to modify observable property "

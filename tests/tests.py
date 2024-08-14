@@ -88,11 +88,6 @@ def invalid_observer(instance, name, value):
     item.value = value + 1
 
 
-async def async_observer(instance: object, property_name: str, value: Any):
-    await sleep(1)
-    print(f"--   async observer finished: value={value}")
-
-
 def test_reset():
     global __obs1
     global __obs2
@@ -101,7 +96,6 @@ def test_reset():
     item.unsubscribe("value", observer1)
     unsubscribe(observer2, item, "value")
     unsubscribe(invalid_observer, item, "value")
-    unsubscribe(async_observer, item, "value")
 
 
 print("-- Subscribing to non-observable property")
@@ -176,11 +170,6 @@ except ObservablePropertyError:
     pass
 except RecursionError:
     print("Failure")
-
-print("-- Testing async observer (printing for eye-review)")
-test_reset()
-subscribe(async_observer, item, "value")
-item.value = 7
 
 print("-- Testing in-class invalid indirect change")
 test_reset()
